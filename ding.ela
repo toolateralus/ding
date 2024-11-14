@@ -149,21 +149,14 @@ main :: (argc: int, argv: char**) -> int {
 
   start := time(null);
   
-  /* while true {
+  while true {
     system("clear");
     elapsed: float64 = time(null) - start;
     remaining := duration - elapsed;
     if (elapsed >= duration) then break;
     print_ascii((s64)remaining);
     sleep(1);
-  } */
-
-  while true {
-    system("clear");
-    print_ascii((s64)(duration--));
-    usleep(100000);
   }
-
 
   return 0;
 }
