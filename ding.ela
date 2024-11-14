@@ -1,6 +1,7 @@
 #import core;
 
-#compiler_flags "-g"
+#compiler_flags "-Oz -flto -s"
+
 get_number :: (n: int) -> string[] {
   switch n {
     0: {
