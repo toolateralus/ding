@@ -1,3 +1,8 @@
+
+### Built with the Ela compiler 
+[A link to the compiler](https://github.com/toolateralus/ela)
+
+
 ### usage: 
 `./ding <n_minutes:float>`
 
