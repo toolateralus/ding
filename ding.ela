@@ -1,94 +1,94 @@
 #import core;
 
-#compiler_flags "-Oz -flto -s"
+#c_flags "-Oz -flto -s"
 
-get_number :: (n: int) -> string[] {
+get_number :: fn(n: int) -> string[] {
   switch n {
     0: {
-      return {"  ___   ", 
-              " / _ \\  ", 
-              "| | | | ", 
-              "| | | | ", 
-              "| |_| | ", 
-              " \\___/  "};    
+      return {"  ___   ",
+              " / _ \\  ",
+              "| | | | ",
+              "| | | | ",
+              "| |_| | ",
+              " \\___/  "};
     }
     1: {
-      return {"  __    ", 
-              " /_ |   ", 
-              "  | |   ", 
-              "  | |   ", 
-              "  | |   ", 
+      return {"  __    ",
+              " /_ |   ",
+              "  | |   ",
+              "  | |   ",
+              "  | |   ",
               "  |_|   "};
     }
     2: {
-      return {"  ___   ", 
-              " |__ \\  ", 
-              "    ) | ", 
-              "   / /  ", 
-              "  / /_  ", 
+      return {"  ___   ",
+              " |__ \\  ",
+              "    ) | ",
+              "   / /  ",
+              "  / /_  ",
               " |____| "};
     }
     3: {
-      return {"  ____  ", 
-              " |___ \\ ", 
-              "   __) |", 
-              "  |__ < ", 
-              "  ___) |", 
+      return {"  ____  ",
+              " |___ \\ ",
+              "   __) |",
+              "  |__ < ",
+              "  ___) |",
               " |____/ "};
     }
     4: {
-      return {"  _  _  ", 
-              " | || | ", 
-              " | || |_ ", 
-              " |__   _|", 
-              "    | | ", 
-              "    |_| "};
+      return {"  _  _   ",
+              " | || |  ",
+              " | || |_ ",
+              " |__   _|",
+              "    | |  ",
+              "    |_|  "};
     }
     5: {
-      return {"  _____ ", 
-              " | ____|", 
-              " | |__  ", 
-              " |___ \\ ", 
-              "  ___) |", 
+      return {"  _____ ",
+              " | ____|",
+              " | |__  ",
+              " |___ \\ ",
+              "  ___) |",
               " |____/ "};
     }
     6: {
-      return {"   __   ", 
-              "  / /   ", 
-              " / /_   ", 
-              "| '_ \\  ", 
-              "| (_) | ", 
+      return {"   __   ",
+              "  / /   ",
+              " / /_   ",
+              "| '_ \\  ",
+              "| (_) | ",
               " \\___/  "};
     }
     7: {
-      return {"  ______", 
-              " |____  |", 
-              "     / /", 
-              "    / / ", 
-              "   / /  ", 
+      return {"  ______",
+              " |____  |",
+              "     / /",
+              "    / / ",
+              "   / /  ",
               "  /_/   "};
     }
     8: {
-      return {"  ___   ", 
-              " / _ \\  ", 
-              "| (_) | ", 
-              " > _ <  ", 
-              "| (_) | ", 
+      return {"  ___   ",
+              " / _ \\  ",
+              "| (_) | ",
+              " > _ <  ",
+              "| (_) | ",
               " \\___/  "};
     }
     9: {
-      return {"  ___   ", 
-              " / _ \\  ", 
-              "| (_) | ", 
-              " \\__, | ", 
-              "   / /  ", 
+      return {"  ___   ",
+              " / _ \\  ",
+              "| (_) | ",
+              " \\__, | ",
+              "   / /  ",
               "  /_/   "};
     }
   }
   return {"INVALID"};
 }
 
-print_ascii :: (remaining: s64) {
+print_ascii :: fn(remaining: s64) {
   minutes : s64 = remaining / 60;
   seconds : s64 = remaining % 60;
 
@@ -111,15 +111,13 @@ print_ascii :: (remaining: s64) {
   lines : string[] = string[]{"", "", "", "", "", ""};
 
   for i in 0..time_str.length {
-
     ch : char = time_str[i];
-
     ascii_lines: string[];
 
-    if ch == #char ":" {
+    if ch == ':' {
       ascii_lines = string[]{" _ ", "(_)", "   ", " _ ", "(_)", "   "};
     } else {
-      s : char[2] = {ch, #char "\0"};
+      s : char[2] = {ch, '\0'};
       ascii_lines = get_number(atoi((char*)s));
     }
 
@@ -128,28 +126,25 @@ print_ascii :: (remaining: s64) {
     }
   }
 
-  for line; lines {
+  for line in lines {
     println(line);
   }
 }
 
-
-
-main :: (argc: int, argv: char**) -> int {
-  if argc == 1 {
-    println("too few arguments. expected `ding <duration>`");
-    return 1;
+main :: fn() {
+  args := Env::args();
+  if args.length == 1 {
+    panic("too few arguments. expected `ding <n_minutes:float>`");
   }
 
-  duration : float64 = atof(argv[1]) * 60.0;
+  duration : float64 = atof(args[1].data) * 60.0;
 
   if duration == 0 {
-    println("duration recieved was 0.");
-    return 1;
+    panic("duration recieved was 0.");
   }
 
   start := time(null);
-  
+
   while true {
     system("clear");
     elapsed: float64 = time(null) - start;
@@ -159,5 +154,5 @@ main :: (argc: int, argv: char**) -> int {
     sleep(1);
   }
 
-  return 0;
+  exit(0);
 }
