@@ -1,6 +1,9 @@
 ### Built with the Ela compiler 
 [A link to the compiler](https://github.com/toolateralus/ela)
 
+The build binary is for linux, built on arch. It has no dependencies, so it should work everywhere.
+The compiler is not available on windows.
+
 ### usage: 
 `./ding <n_minutes:float>`
 

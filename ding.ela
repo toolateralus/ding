@@ -1,135 +1,160 @@
-#import core;
+import fmt::*;
 
-#c_flags "-Oz -flto -s"
+// #c_flags "-Oz -flto -s"
 
-get_number :: fn(n: int) -> string[] {
-  switch n {
-    0: {
-      return {"  ___   ",
-              " / _ \\  ",
-              "| | | | ",
-              "| | | | ",
-              "| |_| | ",
-              " \\___/  "};
-    }
-    1: {
-      return {"  __    ",
-              " /_ |   ",
-              "  | |   ",
-              "  | |   ",
-              "  | |   ",
-              "  |_|   "};
-    }
-    2: {
-      return {"  ___   ",
-              " |__ \\  ",
-              "    ) | ",
-              "   / /  ",
-              "  / /_  ",
-              " |____| "};
-    }
-    3: {
-      return {"  ____  ",
-              " |___ \\ ",
-              "   __) |",
-              "  |__ < ",
-              "  ___) |",
-              " |____/ "};
-    }
-    4: {
-      return {"  _  _   ",
-              " | || |  ",
-              " | || |_ ",
-              " |__   _|",
-              "    | |  ",
-              "    |_|  "};
-    }
-    5: {
-      return {"  _____ ",
-              " | ____|",
-              " | |__  ",
-              " |___ \\ ",
-              "  ___) |",
-              " |____/ "};
-    }
-    6: {
-      return {"   __   ",
-              "  / /   ",
-              " / /_   ",
-              "| '_ \\  ",
-              "| (_) | ",
-              " \\___/  "};
-    }
-    7: {
-      return {"  ______",
-              " |____  |",
-              "     / /",
-              "    / / ",
-              "   / /  ",
-              "  /_/   "};
-    }
-    8: {
-      return {"  ___   ",
-              " / _ \\  ",
-              "| (_) | ",
-              " > _ <  ",
-              "| (_) | ",
-              " \\___/  "};
-    }
-    9: {
-      return {"  ___   ",
-              " / _ \\  ",
-              "| (_) | ",
-              " \\__, | ",
-              "   / /  ",
-              "  /_/   "};
-    }
-  }
-  return {"INVALID"};
+get_number :: fn(n: s32) -> *const str {
+  #static strings : str[6][9] = 
+  .[
+    str.[
+      "  ___   ",
+      " / _ \\  ",
+      "| | | | ",
+      "| | | | ",
+      "| |_| | ",
+      " \\___/  "
+    ],
+    str.[
+      "  __    ",
+      " /_ |   ",
+      "  | |   ",
+      "  | |   ",
+      "  | |   ",
+      "  |_|   "
+    ],
+    str.[
+      "  ___   ",
+      " |__ \\  ",
+      "    ) | ",
+      "   / /  ",
+      "  / /_  ",
+      " |____| "
+    ]
+    str.[
+      "  ____  ",
+      " |___ \\ ",
+      "   __) |",
+      "  |__ < ",
+      "  ___) |",
+      " |____/ "
+    
+    ],
+    str.[
+      "  _  _   ",
+      " | || |  ",
+      " | || |_ ",
+      " |__   _|",
+      "    | |  ",
+      "    |_|  "
+    
+    ],
+    str.[
+      "  _____ ",
+      " | ____|",
+      " | |__  ",
+      " |___ \\ ",
+      "  ___) |",
+      " |____/ "
+    
+    ],
+    str.[
+      "   __   ",
+      "  / /   ",
+      " / /_   ",
+      "| '_ \\  ",
+      "| (_) | ",
+      " \\___/  "
+    
+    ],
+    str.[
+      "  ______",
+      " |____  |",
+      "     / /",
+      "    / / ",
+      "   / /  ",
+      "  /_/   "
+    
+    ],
+    str.[
+      "  ___   ",
+      " / _ \\  ",
+      "| (_) | ",
+      " > _ <  ",
+      "| (_) | ",
+      " \\___/  "
+    
+    ],
+    str.[
+      "  ___   ",
+      " / _ \\  ",
+      "| (_) | ",
+      " \\__, | ",
+      "   / /  ",
+      "  /_/   "
+    ],
+  ];
+  
+  return strings[n] as *const str;
 }
 
 print_ascii :: fn(remaining: s64) {
-  minutes : s64 = remaining / 60;
-  seconds : s64 = remaining % 60;
+  mut minutes : s64 = remaining / 60;
+  mut seconds : s64 = remaining % 60;
 
-  seconds_str : string;
-  minutes_str : string;
+  mut seconds_str : String;
+  mut minutes_str : String;
+
   if seconds < 10 {
-    seconds_str = $"0{seconds}";
+    seconds_str = format("0%", .[any::from(&mut seconds)], Format_Options::default());
   } else {
-    seconds_str = to_string(seconds);
+    seconds_str = format("%", .[any::from(&mut seconds)], Format_Options::default())
   }
 
   if minutes < 10 {
-    minutes_str = $"0{minutes}";
+    minutes_str = format("0%", .[any::from(&mut minutes)], Format_Options::default());
   } else {
-    minutes_str = to_string(minutes);
+    minutes_str = format("%", .[any::from(&mut minutes)], Format_Options::default())
   }
 
-  time_str := $"{minutes_str}:{seconds_str}";
+  time_str := format("%:%", .[any::from(&mut minutes_str), any::from(&mut seconds_str)], Format_Options::default());
 
-  lines : string[] = string[]{"", "", "", "", "", ""};
+  mut lines: String[];
+  lines.initialize(6);
+
+  defer {
+    lines.deinit();
+  }
+
+  defer {
+    seconds_str.deinit();
+    minutes_str.deinit();
+    time_str.deinit();
+    lines.deinit();
+  }
+
+  #static colon_lines : str[6] = str.[" _ ", "(_)", "   ", " _ ", "(_)", "   "];
 
   for i in 0..time_str.length {
-    ch : char = time_str[i];
-    ascii_lines: string[];
+    ch : u8 = time_str[i];
 
-    if ch == ':' {
-      ascii_lines = string[]{" _ ", "(_)", "   ", " _ ", "(_)", "   "};
-    } else {
-      s : char[2] = {ch, '\0'};
-      ascii_lines = get_number(atoi((char*)s));
-    }
+    mut ascii_lines: *const str = colon_lines;
+
+    if ch != ':' {
+      s : u8[2] = .[ch, '\0'];
+      ascii_lines = get_number(atoi(s));
+    } 
 
     for j in 0..6 {
-      lines[j] = $"{lines[j]}{ascii_lines[j]} ";
+      lines[j] = format("%%", .[any::from(&mut lines[j]), any::from(&mut ascii_lines[j])], Format_Options::default());
     }
   }
 
   for line in lines {
     println(line);
+    line.deinit();
   }
 }
+
+#foreign time :: fn(value: *const void) -> s32;
 
 main :: fn() {
   args := Env::args();
@@ -137,7 +162,7 @@ main :: fn() {
     panic("too few arguments. expected `ding <n_minutes:float>`");
   }
 
-  duration : float64 = atof(args[1].data) * 60.0;
+  duration : f64 = atof(args[1].data) * 60.0;
 
   if duration == 0 {
     panic("duration recieved was 0.");
@@ -146,11 +171,12 @@ main :: fn() {
   start := time(null);
 
   while true {
-    system("clear");
-    elapsed: float64 = time(null) - start;
+    println("what");
+    system("clear"c);
+    elapsed: f64 = time(null) - start;
     remaining := duration - elapsed;
     if (elapsed >= duration) then break;
-    print_ascii((s64)remaining);
+    print_ascii(remaining as s64);
     sleep(1);
   }
 
