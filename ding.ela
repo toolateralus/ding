@@ -2,7 +2,7 @@ import fmt::*;
 
 // #c_flags "-Oz -flto -s"
 
-get_number :: fn(n: s32) -> *const str {
+fn get_number(n: s32) -> *const str {
   #static strings : str[6][9] = 
   .[
     str.[
@@ -96,7 +96,7 @@ get_number :: fn(n: s32) -> *const str {
   return strings[n] as *const str;
 }
 
-print_ascii :: fn(remaining: s64) {
+fn print_ascii(remaining: s64) {
   mut minutes : s64 = remaining / 60;
   mut seconds : s64 = remaining % 60;
 
@@ -104,18 +104,18 @@ print_ascii :: fn(remaining: s64) {
   mut minutes_str : String;
 
   if seconds < 10 {
-    seconds_str = format("0%", .[any::from(&mut seconds)], Format_Options::default());
+    seconds_str = format("0%", (seconds,), FormatOptions::default());
   } else {
-    seconds_str = format("%", .[any::from(&mut seconds)], Format_Options::default())
+    seconds_str = format("%", (seconds,), FormatOptions::default());
   }
 
   if minutes < 10 {
-    minutes_str = format("0%", .[any::from(&mut minutes)], Format_Options::default());
+    minutes_str = format("0%", (minutes,), FormatOptions::default());
   } else {
-    minutes_str = format("%", .[any::from(&mut minutes)], Format_Options::default())
+    minutes_str = format("%", (minutes,), FormatOptions::default());
   }
 
-  time_str := format("%:%", .[any::from(&mut minutes_str), any::from(&mut seconds_str)], Format_Options::default());
+  mut time_str := format("%:%", (minutes_str, seconds_str), FormatOptions::default());
 
   mut lines: String[];
   lines.initialize(6);
@@ -131,7 +131,7 @@ print_ascii :: fn(remaining: s64) {
     lines.deinit();
   }
 
-  #static colon_lines : str[6] = str.[" _ ", "(_)", "   ", " _ ", "(_)", "   "];
+  colon_lines : str[6] = str.[" _ ", "(_)", "   ", " _ ", "(_)", "   "];
 
   for i in 0..time_str.length {
     ch : u8 = time_str[i];
@@ -144,7 +144,7 @@ print_ascii :: fn(remaining: s64) {
     } 
 
     for j in 0..6 {
-      lines[j] = format("%%", .[any::from(&mut lines[j]), any::from(&mut ascii_lines[j])], Format_Options::default());
+      lines[j] = format("%%", (lines[j], ascii_lines[j]), FormatOptions::default());
     }
   }
 
@@ -154,9 +154,9 @@ print_ascii :: fn(remaining: s64) {
   }
 }
 
-#foreign time :: fn(value: *const void) -> s32;
+#foreign fn time(value: *const void) -> s32;
 
-main :: fn() {
+fn main() {
   args := Env::args();
   if args.length == 1 {
     panic("too few arguments. expected `ding <n_minutes:float>`");
@@ -171,7 +171,6 @@ main :: fn() {
   start := time(null);
 
   while true {
-    println("what");
     system("clear"c);
     elapsed: f64 = time(null) - start;
     remaining := duration - elapsed;
